@@ -21,7 +21,6 @@ class ProductTableViewCell: UITableViewCell {
     }
     
     func configCell(item: Product) {
-        // Show image
         productImageView.setImageWithUrl(url: item.image)
         titleLabel.text = "Title: " + item.title
         subtitleLabel.text = item.subtitle.separate(every: 5, with: "\n")

@@ -9,9 +9,9 @@ import UIKit
 
 
 class HomeViewController: UIViewController {
-    @IBOutlet weak var productTableView: UITableView!
     
-    var homeViewModel = HomeViewModel()
+    private let productTableView = UITableView()
+    private let homeViewModel = HomeViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,31 +19,38 @@ class HomeViewController: UIViewController {
     }
     
     private func setupView() {
+        self.title = "Home"
+        view.backgroundColor = .white
+        
+        navigationController?.navigationBar.barTintColor = .black
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+        navigationController?.navigationBar.tintColor = .white
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .done, target: nil, action: nil)
+        
+        let layout = view.safeAreaLayoutGuide
+        view.addSubview(productTableView)
+        productTableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        
+        productTableView.leadingAnchor.constraint(equalTo: layout.leadingAnchor).isActive = true
+        productTableView.trailingAnchor.constraint(equalTo: layout.trailingAnchor).isActive = true
+        productTableView.topAnchor.constraint(equalTo: layout.topAnchor).isActive = true
+        productTableView.bottomAnchor.constraint(equalTo: layout.bottomAnchor).isActive = true
+        
         productTableView.delegate = self
         productTableView.dataSource = self
         productTableView.register(cellType: ProductTableViewCell.self)
+        
     }
     
-    private func switchToDetailScreen(index: IndexPath) {
-        
-        let mainStoryboard = UIStoryboard(name: "Detail", bundle: .main)
-        guard let detailViewController = mainStoryboard.instantiateViewController(withIdentifier: "DetailView") as? DetailViewController else { return }
-        detailViewController.modalPresentationStyle = .fullScreen
-        detailViewController.detailViewModel.itemProduct = homeViewModel.listProduct[index.item]
-        navigationController?.pushViewController(detailViewController, animated: true)
+    private func switchToDetailScreen(index: Int) {
+        let detailViewControllertail = DetailViewController()
+        detailViewControllertail.detailViewModel.itemProduct = homeViewModel.listProduct[index]
+        navigationController?.pushViewController(detailViewControllertail, animated: true)
     }
 }
 
-extension HomeViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch homeViewModel.listProduct[indexPath.row].subtitle.count {
-        case 0...10:
-            return 120
-        default:
-            return UITableView.automaticDimension
-        }
-    }
-}
+extension HomeViewController: UITableViewDelegate { }
 
 extension HomeViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -58,7 +65,7 @@ extension HomeViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switchToDetailScreen(index: indexPath)
+        switchToDetailScreen(index: indexPath.row)
     }
 }
 
